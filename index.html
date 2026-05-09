@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free Fire ID Tracker | Pro Stats</title>
+    <meta name="description" content="Get instant Free Fire player details, level, rank, and more using UID.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>FF ID Tracker</h1>
+            <p>Enter Player UID to fetch live profile details</p>
+        </header>
+
+        <section class="search-section">
+            <div class="input-group">
+                <input type="text" id="uidInput" placeholder="Enter Player ID (e.g. 123456789)" autocomplete="off">
+                <button id="searchBtn">
+                    <i class="fas fa-search" style="margin-right: 10px;"></i> Search
+                </button>
+            </div>
+            <div id="loader" class="loader"></div>
+            <p id="errorMsg" style="color: #ff4d4d; text-align: center; margin-top: 15px; display: none;"></p>
+        </section>
+
+        <section id="resultSection" class="result-section">
+            <div class="profile-card">
+                <div class="avatar-container">
+                    <img id="playerAvatar" src="https://api.dicebear.com/7.x/avataaars/svg?seed=ff" alt="Avatar">
+                </div>
+                <div class="info-container">
+                    <h2 id="playerName">PLAYER_NAME</h2>
+                    <span class="uid-badge">UID: <span id="playerID">000000000</span></span>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-label">Level</span>
+                            <span class="stat-value" id="playerLevel">--</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Region</span>
+                            <span class="stat-value" id="playerRegion">--</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Rank BR</span>
+                            <span class="stat-value rank-badge" id="playerRankBR">--</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Rank CS</span>
+                            <span class="stat-value rank-badge" id="playerRankCS">--</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Likes</span>
+                            <span class="stat-value" id="playerLikes">--</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Created At</span>
+                            <span class="stat-value" id="playerCreated" style="font-size: 1rem;">--</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer style="margin-top: 50px; color: var(--text-dim); font-size: 0.8rem; text-align: center;">
+            <p>&copy; 2024 FF Pro Tracker. Not affiliated with Garena.</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
