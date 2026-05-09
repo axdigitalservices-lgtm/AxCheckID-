@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const resultSection = document.getElementById('result');
     const errorMsg = document.getElementById('errorMsg');
 
-    // UI elements from index.html
     const pName = document.getElementById('pName');
     const pID = document.getElementById('pID');
     const pLevel = document.getElementById('pLevel');
@@ -19,11 +18,10 @@ document.addEventListener('DOMContentLoaded', () => {
     searchBtn.addEventListener('click', async () => {
         const uid = uidInput.value.trim();
         if (!uid || isNaN(uid)) {
-            showError('INVALID UID FORMAT. ACCESS DENIED.');
+            showError('INVALID UID FORMAT.');
             return;
         }
-
-        fetchSGData(uid);
+        fetchData(uid);
     });
 
     // Handle Enter Key
@@ -31,43 +29,47 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.key === 'Enter') searchBtn.click();
     });
 
-    async function fetchSGData(uid) {
+    async function fetchData(uid) {
         errorMsg.style.display = 'none';
         resultSection.style.display = 'none';
         loader.style.display = 'block';
         searchBtn.disabled = true;
 
-        // List of APIs to try specifically for SG region
-        const apiList = [
+        // SG Region APIs
+        const apis = [
             `https://freefireinfo.in/api/info?uid=${uid}&region=sg`,
-            `https://ff-api-five.vercel.app/api/info?uid=${uid}&region=sg`,
-            `https://ff-info-api.vercel.app/api/info?uid=${uid}&region=sg`
+            `https://ff-api-five.vercel.app/api/info?uid=${uid}&region=sg`
         ];
 
-        let found = false;
+        let success = false;
 
-        for (let url of apiList) {
+        for (let url of apis) {
             try {
-                // Using AllOrigins Proxy to bypass CORS on GitHub/Local
-                const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
-                const response = await fetch(proxyUrl);
+                // Using corsproxy.io which is often faster and has better CORS support
+                const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(url)}`;
                 
+                // Set a timeout of 8 seconds per API call
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 8000);
+
+                const response = await fetch(proxyUrl, { signal: controller.signal });
+                clearTimeout(timeoutId);
+
                 if (!response.ok) continue;
 
                 const data = await response.json();
-                
                 if (data.name || data.nickname) {
                     renderData(data);
-                    found = true;
+                    success = true;
                     break;
                 }
             } catch (e) {
-                console.log("Searching next server...");
+                console.log("Server error, trying next...");
             }
         }
 
-        if (!found) {
-            showError('PLAYER NOT FOUND IN SG REGION OR SERVERS BUSY.');
+        if (!success) {
+            showError('DATABASE OFFLINE. TRY AGAIN LATER OR CHECK UID.');
         }
 
         loader.style.display = 'none';
@@ -79,12 +81,11 @@ document.addEventListener('DOMContentLoaded', () => {
         pID.textContent = data.uid || uidInput.value;
         pLevel.textContent = data.level || '--';
         pRegion.textContent = 'SINGAPORE (SG)';
-        pBR.textContent = data.br_rank || data.rank || 'N/A';
-        pCS.textContent = data.cs_rank || 'N/A';
+        pBR.textContent = data.br_rank || data.rank || '--';
+        pCS.textContent = data.cs_rank || '--';
         pLikes.textContent = data.likes || '0';
         pCreated.textContent = data.created_at || 'PRIVATE';
         
-        // Dynamic robot avatar based on name
         pAvatar.src = `https://api.dicebear.com/7.x/bottts/svg?seed=${data.name}&backgroundColor=050507`;
         
         resultSection.style.display = 'block';
